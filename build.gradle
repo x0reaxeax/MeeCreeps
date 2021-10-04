@@ -25,7 +25,7 @@ apply plugin: 'maven'
 repositories {
     maven { // The repo from which to get waila
         name "Mobius Repo"
-        url "http://tehnut.info/maven"
+        url "https://maven.tehnut.info"
         //url "http://mobiusstrip.eu/maven"
     }
     maven { // JEI
