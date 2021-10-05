@@ -28,7 +28,6 @@ public class GuiProxy implements IGuiHandler {
         } else if (id == GUI_MEECREEP_DISMISS) {
             return new GuiMeeCreeps(id);
         } else if (id == GUI_WHEEL) {
-            System.out.println("Spawning new requested GUI_WHEEL");
             return new GuiWheel();
         } else if (id == GUI_ASKNAME) {
             return new GuiAskName();
@@ -36,7 +35,6 @@ public class GuiProxy implements IGuiHandler {
             return new GuiAskCoords();
         }
 
-        System.out.println("GuiElement NULL");
         return null;
     }
 }

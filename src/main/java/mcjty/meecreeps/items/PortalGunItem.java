@@ -33,6 +33,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
 
+import net.minecraft.util.math.MathHelper;
+
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,12 +76,10 @@ public class PortalGunItem extends Item {
         if (world.isRemote) {
             // Client
             if (world.getBlockState(pos.offset(side)).getBlock() == ModBlocks.portalBlock) {
-                System.out.println("INSTANCE.sendToServer #0x01");
                 MeeCreepsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(MeeCreeps.MODID, CommandHandler.CMD_CANCEL_PORTAL, TypedMap.builder().put(CommandHandler.PARAM_POS, pos.offset(side)).build()));
                 return EnumActionResult.SUCCESS;
             }
             if (side != EnumFacing.UP && side != EnumFacing.DOWN && world.getBlockState(pos.offset(side).down()).getBlock() == ModBlocks.portalBlock) {
-                System.out.println("INSTANCE.sendToServer #0x02");
                 MeeCreepsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(MeeCreeps.MODID, CommandHandler.CMD_CANCEL_PORTAL, TypedMap.builder().put(CommandHandler.PARAM_POS, pos.offset(side).down()).build()));
                 return EnumActionResult.SUCCESS;
             }
@@ -88,25 +88,19 @@ public class PortalGunItem extends Item {
                 GuiWheel.selectedBlock = pos;
                 GuiWheel.selectedSide = side;
                 
-                System.out.println("GuiWheel Open MeeCreeps.instance = " + MeeCreeps.instance + "\nGuiProxy.GUI_WHEEL = " + GuiProxy.GUI_WHEEL + "\nworld = " + world);
-
                 player.openGui(MeeCreeps.instance, GuiProxy.GUI_WHEEL, world, pos.getX(), pos.getY(), pos.getZ());
-                System.out.println("GuiWheel Boundary");
             }
             return EnumActionResult.SUCCESS;
         } else {
             // Server
             if (world.getBlockState(pos.offset(side)).getBlock() == ModBlocks.portalBlock) {
-                System.out.println("pos.offset(side) = " + pos.offset(side) + ".getBlock() == ModBlocks.portalBlock");
                 return EnumActionResult.SUCCESS;
             }
             if (side != EnumFacing.UP && side != EnumFacing.DOWN && world.getBlockState(pos.offset(side).down()).getBlock() == ModBlocks.portalBlock) {
-                System.out.println("INSTANCE.sendToServer #0x03");
                 return EnumActionResult.SUCCESS;
             }
 
             if (!player.isSneaking()) {
-                System.out.println("Throwing projectile");
                 throwProjectile(player, hand, world);
             }
         }
@@ -255,43 +249,18 @@ public class PortalGunItem extends Item {
             // Server
             if (!player.isSneaking()) {
                 throwProjectile(player, hand, world);
-            } /* else {
-                
-                // Shift Right-Click Air
-                BlockPos posBelow = player.getPosition().down();
-                
-                EnumFacing side = EnumFacing.getDirectionFromEntityLiving(posBelow, player);
-                
-                System.out.println("Side = " + side + " Coords: X = " + posBelow.getX() + "Y = " + posBelow.getY() + "Z = " + posBelow.getZ());
-
-
-                GuiWheel.selectedBlock = posBelow;
-                GuiWheel.selectedSide = side;
-                System.out.println("GuiWheel Open MeeCreeps.instance = " + MeeCreeps.instance + "\nGuiProxy.GUI_WHEEL = " + GuiProxy.GUI_WHEEL + "\nworld = " + world);
-                
-                // 'world' is 'WorldServer' and needs to be 'WorldClient'
-                player.openGui(MeeCreeps.instance, GuiProxy.GUI_WHEEL, world, posBelow.getX(), posBelow.getY(), posBelow.getZ());
-
-
-                // return EnumActionResult.SUCCESS;
-                
-            }*/
+            }
         } else {
             if (player.isSneaking()) {
                 // Shift Right-Click Air
                 BlockPos posBelow = player.getPosition().down();
-                
-                EnumFacing side = EnumFacing.getDirectionFromEntityLiving(posBelow, player);
 
-                System.out.println("Side = " + side + " Coords: X = " + posBelow.getX() + "Y = " + posBelow.getY() + "Z = " + posBelow.getZ());
-
+                // Get Horizontal Facing Side
+                EnumFacing side = EnumFacing.fromAngle(player.rotationYaw);
 
                 GuiWheel.selectedBlock = posBelow;
                 GuiWheel.selectedSide = side;
-
-                System.out.println("GuiWheel Open MeeCreeps.instance = " + MeeCreeps.instance + "\nGuiProxy.GUI_WHEEL = " + GuiProxy.GUI_WHEEL + "\nworld = " + world);
                 
-                // 'world' is 'WorldServer' and needs to be 'WorldClient'
                 player.openGui(MeeCreeps.instance, GuiProxy.GUI_WHEEL, world, posBelow.getX(), posBelow.getY(), posBelow.getZ());
             }
         }

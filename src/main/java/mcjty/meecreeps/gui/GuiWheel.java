@@ -77,15 +77,8 @@ public class GuiWheel extends GuiScreen {
         } else if (keyCode == Keyboard.KEY_INSERT) {
             // GuiWheel INSERT_KEY press
             if (lastSelected != -1) {
-                System.out.println("KEY_INSERT ID: " + lastSelected);
-                /*
-                ItemStack heldItem = PortalGunItem.getGun(mc.player);
-                List<TeleportDestination> destinations = PortalGunItem.getDestinations(heldItem);
-                
-                if (destinations.get(lastSelected) != null) {}
-                */
-
                 BlockPos posBelow = mc.player.getPosition().down();
+                GuiAskName.destinationIndex = lastSelected;
                 mc.player.openGui(MeeCreeps.instance, GuiProxy.GUI_ASKCOORDS, mc.world, posBelow.getX(), posBelow.getY(), posBelow.getZ());
             }
         }
@@ -112,9 +105,11 @@ public class GuiWheel extends GuiScreen {
             if (!heldItem.isEmpty()) {
                 List<TeleportDestination> destinations = PortalGunItem.getDestinations(heldItem);
                 if (destinations.get(q) != null) {
+                    // Set Existing Teleport Destination
                     MeeCreepsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(MeeCreeps.MODID, CommandHandler.CMD_SET_CURRENT,
                             TypedMap.builder().put(CommandHandler.PARAM_ID, q).build()));
                 } else {
+                    // Create new destination
                     BlockPos bestPosition = TeleportationTools.findBestPosition(mc.world, selectedBlock, selectedSide);
                     if (bestPosition == null) {
 //                        GuiBalloon.message = "Can't find a good spot to make a portal!";
@@ -124,6 +119,8 @@ public class GuiWheel extends GuiScreen {
                         return;
                     } else {
                         GuiAskName.destinationIndex = q;
+                        // MOUSE_LEFT = 0, MOUSE_RIGHT = 1
+                        if (mouseButton == 1) { selectedSide = EnumFacing.UP; }
                         GuiAskName.destination = new TeleportDestination("", mc.world.provider.getDimension(), bestPosition, selectedSide);
                         closeThis();
                         mc.player.openGui(MeeCreeps.instance, GuiProxy.GUI_ASKNAME, mc.world, selectedBlock.getX(), selectedBlock.getY(), selectedBlock.getZ());
@@ -187,10 +184,12 @@ public class GuiWheel extends GuiScreen {
                 TeleportDestination destination = destinations.get(lastSelected);
                 List<String> tooltips = new ArrayList<>();
                 if (destination == null) {
-                    tooltips.add(TextFormatting.BLUE + "Click: " + TextFormatting.WHITE + "to set current location as destination");
+                    tooltips.add(TextFormatting.BLUE + "Left-Click: " + TextFormatting.WHITE + "to set current location as destination");
+                    tooltips.add(TextFormatting.AQUA + "Right-Click: " + TextFormatting.WHITE + "to set current location as destination " + TextFormatting.LIGHT_PURPLE + "(Force VERTICAL)");
                     tooltips.add(TextFormatting.GREEN  + "Insert: " + TextFormatting.WHITE + "to enter custom coordinates");
                 } else {
-                    tooltips.add(TextFormatting.BLUE + "Click: " + TextFormatting.WHITE + "to set this destination as current");
+                    tooltips.add(TextFormatting.BLUE + "Left-Click: " + TextFormatting.WHITE + "to set this destination as current");
+                    tooltips.add(TextFormatting.AQUA + "Right-Click: " + TextFormatting.WHITE + "to set current location as destination " + TextFormatting.LIGHT_PURPLE + "(Force VERTICAL)");
                     tooltips.add(TextFormatting.GREEN  + "Insert: " + TextFormatting.WHITE + "to enter custom coordinates");
                     tooltips.add(TextFormatting.RED + "Del: " + TextFormatting.WHITE + "to remove this destination");
                 }
@@ -228,7 +227,7 @@ public class GuiWheel extends GuiScreen {
         if (destination == null) {
             renderTooltipText(I18n.format("message.meecreeps.gui.destination_not_set"));
         } else {
-            // This looks interesting
+            // This looks interesting, check it out later
             BlockPos p = destination.getPos();
             if (destination.getDimension() == Minecraft.getMinecraft().world.provider.getDimension()) {
                 double dist = Math.sqrt(p.distanceSq(Minecraft.getMinecraft().player.getPosition()));

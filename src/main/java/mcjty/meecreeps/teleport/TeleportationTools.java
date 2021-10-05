@@ -136,6 +136,34 @@ public class TeleportationTools {
             }
             return null;
         }
+
+        // Gotta add W-E-N-S, so new destinations can be created anywhere
+        if (selectedSide == EnumFacing.EAST) {
+            if (world.isAirBlock(selectedBlock.east()) && world.isAirBlock(selectedBlock.east(2))) {
+                return selectedBlock.east();
+            }
+        }
+        if (selectedSide == EnumFacing.WEST) {
+            if (world.isAirBlock(selectedBlock.west()) && world.isAirBlock(selectedBlock.west(2))) {
+                return selectedBlock.west();
+            }
+            return null;
+        }
+
+        if (selectedSide == EnumFacing.NORTH) {
+            if (world.isAirBlock(selectedBlock.north()) && world.isAirBlock(selectedBlock.north(2))) {
+                return selectedBlock.north();
+            }
+            return null;
+        }
+        if (selectedSide == EnumFacing.SOUTH) {
+            if (world.isAirBlock(selectedBlock.south()) && world.isAirBlock(selectedBlock.south(2))) {
+                return selectedBlock.south();
+            }
+            return null;
+        }
+        
+
         selectedBlock = selectedBlock.offset(selectedSide);
         if (world.isAirBlock(selectedBlock.down())) {
             selectedBlock = selectedBlock.down();
