@@ -58,6 +58,7 @@ public class GuiWheel extends GuiScreen {
 
     private static boolean isKeyDown(KeyBinding key) {
         int i = key.getKeyCode();
+        // what the absolute neverending, space-time curving, resonating F_U_C_K is this supposed to be???? Fuck me... 
         return ((i != 0) && (i < 256)) ? ((i < 0) ? Mouse.isButtonDown(i + 100) : Keyboard.isKeyDown(i)) : false;
     }
 
@@ -72,6 +73,20 @@ public class GuiWheel extends GuiScreen {
                     MeeCreepsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(MeeCreeps.MODID, CommandHandler.CMD_DELETE_DESTINATION,
                             TypedMap.builder().put(CommandHandler.PARAM_ID, lastSelected).build()));
                 }
+            }
+        } else if (keyCode == Keyboard.KEY_INSERT) {
+            // GuiWheel INSERT_KEY press
+            if (lastSelected != -1) {
+                System.out.println("KEY_INSERT ID: " + lastSelected);
+                /*
+                ItemStack heldItem = PortalGunItem.getGun(mc.player);
+                List<TeleportDestination> destinations = PortalGunItem.getDestinations(heldItem);
+                
+                if (destinations.get(lastSelected) != null) {}
+                */
+
+                BlockPos posBelow = mc.player.getPosition().down();
+                mc.player.openGui(MeeCreeps.instance, GuiProxy.GUI_ASKCOORDS, mc.world, posBelow.getX(), posBelow.getY(), posBelow.getZ());
             }
         }
     }
@@ -173,9 +188,11 @@ public class GuiWheel extends GuiScreen {
                 List<String> tooltips = new ArrayList<>();
                 if (destination == null) {
                     tooltips.add(TextFormatting.BLUE + "Click: " + TextFormatting.WHITE + "to set current location as destination");
+                    tooltips.add(TextFormatting.GREEN  + "Insert: " + TextFormatting.WHITE + "to enter custom coordinates");
                 } else {
                     tooltips.add(TextFormatting.BLUE + "Click: " + TextFormatting.WHITE + "to set this destination as current");
-                    tooltips.add(TextFormatting.BLUE + "Del: " + TextFormatting.WHITE + "to remove this destination");
+                    tooltips.add(TextFormatting.GREEN  + "Insert: " + TextFormatting.WHITE + "to enter custom coordinates");
+                    tooltips.add(TextFormatting.RED + "Del: " + TextFormatting.WHITE + "to remove this destination");
                 }
                 drawHoveringText(tooltips, mouseX, mouseY);
             }
@@ -211,6 +228,7 @@ public class GuiWheel extends GuiScreen {
         if (destination == null) {
             renderTooltipText(I18n.format("message.meecreeps.gui.destination_not_set"));
         } else {
+            // This looks interesting
             BlockPos p = destination.getPos();
             if (destination.getDimension() == Minecraft.getMinecraft().world.provider.getDimension()) {
                 double dist = Math.sqrt(p.distanceSq(Minecraft.getMinecraft().player.getPosition()));

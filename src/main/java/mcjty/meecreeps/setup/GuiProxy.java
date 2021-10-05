@@ -3,6 +3,7 @@ package mcjty.meecreeps.setup;
 import mcjty.meecreeps.gui.GuiAskName;
 import mcjty.meecreeps.gui.GuiMeeCreeps;
 import mcjty.meecreeps.gui.GuiWheel;
+import mcjty.meecreeps.gui.GuiAskCoords;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -13,6 +14,7 @@ public class GuiProxy implements IGuiHandler {
     public static final int GUI_MEECREEP_DISMISS = 2;
     public static final int GUI_WHEEL = 3;
     public static final int GUI_ASKNAME = 4;
+    public static final int GUI_ASKCOORDS = 5;
 
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
@@ -26,10 +28,15 @@ public class GuiProxy implements IGuiHandler {
         } else if (id == GUI_MEECREEP_DISMISS) {
             return new GuiMeeCreeps(id);
         } else if (id == GUI_WHEEL) {
+            System.out.println("Spawning new requested GUI_WHEEL");
             return new GuiWheel();
         } else if (id == GUI_ASKNAME) {
             return new GuiAskName();
+        } else if (id == GUI_ASKCOORDS) {
+            return new GuiAskCoords();
         }
+
+        System.out.println("GuiElement NULL");
         return null;
     }
 }
